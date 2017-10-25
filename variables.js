@@ -8,7 +8,8 @@ function Variables() {
     set: set,
     del: del,
     push: push,
-    pop: pop
+    pop: pop,
+    incr: incr
   }
 
   function declare(name) {
@@ -59,16 +60,21 @@ function Variables() {
     declarations = declarations.__proto__
   }
 
+  function incr(name, amount) {
+    var currentVal = declarations[name]
+    if (isNumeric(currentVal)) {
+      declarations[name] = +currentVal + amount
+    } else {
+      throw 'Tried to increment non-numeric variable'
+    }
+  }
+
   function isInScope(name) {
     return name in declarations
   }
 
   function isInCurrentFrame(name) {
     return has(declarations, name)
-  }
-
-  function has(obj, prop) {
-    return Object.prototype.hasOwnProperty.call(obj, prop)
   }
 }
 
@@ -84,6 +90,14 @@ Variables.expandSubscripts = function(name, variables) {
     var subscriptValue = variables.read(subscript)
     return subscriptValue.length + ':' + subscriptValue
   }).join('')
+}
+
+function has(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop)
+}
+
+function isNumeric(a) {
+  return typeof a === 'number' || a.match(/^[0-9]+$/)
 }
 
 module.exports = Variables

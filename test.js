@@ -101,6 +101,33 @@ describe('Variables', function() {
     v.pop()
     expect(v.read('i')).toBe(2)
   })
+
+  it('throws an error if you delete a variable from a higher stack frame', function() {
+    v.declare('i')
+    v.set('i', 1)
+    v.push()
+    expect(function() { v.del('i') }).toThrow()
+  })
+
+  it('increments a variable', function() {
+    v.declare('i')
+    v.set('i', 1)
+    v.incr('i', 2)
+    expect(v.read('i')).toBe(3)
+  })
+
+  it('converts string variables to ints before incrementing', function() {
+    v.declare('foo')
+    v.set('foo', '012')
+    v.incr('foo', 2)
+    expect(v.read('foo')).toBe(14)
+  })
+
+  it('throws an error if you increment a non-numeric variable', function() {
+    v.declare('i')
+    v.set('i', ' 1')
+    expect(function() { v.incr('i', 1) }).toThrow()
+  })
 })
 
 describe('expandName', function() {
