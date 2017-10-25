@@ -189,25 +189,25 @@ CONDITIONALS
 
     Conditionals look like this:
 
-      CHK  MYVAR = "SOME VALUE"
-      SET  'LINE[1] "GOT EXPECTED VALUE"
+      CHK  $MYVAR = "SOME VALUE"
+      SET  !DISP[1] "GOT EXPECTED VALUE"
       CATCH
-      CHK  MYVAR <> "SOME VALUE"
-      SET  'LINE[1] "GOT "
-      APPD 'LINE[1] MYVAR
-      APPD 'LINE[1] " INSTEAD"
+      CHK  $MYVAR <> "SOME VALUE"
+      SET  !DISP[1] "GOT "
+      APPD !DISP[1] MYVAR
+      APPD !DISP[1] " INSTEAD"
       CATCH
 
     The CHK command does a boolean test, using its second
     argument as a comparator. If the condition is true, the
     following commands are executed. If the condition is
     false, the following commands are skipped over until a
-    CATCH command is reached. The CATCH itself is a no-op.
+    CATCH command is reached, at which point normal
+    execution resumes. The CATCH itself is a no-op.
 
     Note that there is no "nesting" of conditionals, and
-    a question-command like CHK can't really be said to
-    "match" with a particular CATCH. E.g. the following
-    code:
+    a CHK command can't really be said to "match" with a
+    particular CATCH. E.g. the following code:
 
       CHK  FOO 1
       CHK  BAR 2
@@ -220,24 +220,24 @@ CONDITIONALS
     BAR is not 2, execution jumps to the first CATCH.
 
     To construct complex boolean operations, it is necessary
-    to combine conditionals:
+    to combine CHK commands:
 
       ---- BOOLEAN AND EXAMPLE
-      CHK  MONEY >= 5
-      CHK  AGE >= 21
-      SET 'CAN_BUY_DRINK 'YES
+      CHK  $MONEY >= 5
+      CHK  $AGE >= 21
+      SET  CAN_BUY_DRINK YES
       CATCH
 
       ---- BOOLEAN OR EXAMPLE
-      CHK  PULSE = 0
-      SET  'DEAD 'YES
+      CHK  $PULSE = 0
+      SET  DEAD YES
       CATCH
-      CHK  NUMBER_OF_HEADS < 1
-      SET  'DEAD 'YES
+      CHK  $NUMBER_OF_HEADS < 1
+      SET  DEAD YES
       CATCH
 
     These approaches can, of course, be trivially combined
-    to construct sums of products, so any boolean expression
+    to construct sums of products, so any boolean function
     can be formed.
 
 COMMANDS
@@ -338,11 +338,9 @@ CATCH
     "=", "<", ">", "<=", ">=", or "<>". Any other value of
     <op> will crash the program.
 
-    When comparing values shorter than 20 characters, the
-    values are padded with leading zeroes until they are 20
-    characters long. They are then compared
-    lexicographically. This means that integers will be
-    compared as integers.
+    If both values are numeric, they will be converted to
+    integers before comparison. Otherwise, the values are
+    compared lexicographically.
 
     If the comparison holds true, CHK does nothing. If it is
     false, program execution skips downward until it reaches
