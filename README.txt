@@ -289,7 +289,7 @@ APPD <var> <text>
 SHFT <dest> <src>
 
     Removes the first character from the value in variable
-    <src> and puts it in
+    <src> and appends it to variable <dest>.
 
 MARK <phrase>
 JUMP <phrase>
