@@ -209,11 +209,11 @@ CONDITIONALS
     a CHK command can't really be said to "match" with a
     particular CATCH. E.g. the following code:
 
-      CHK  FOO 1
-      CHK  BAR 2
-      SET  'LINE[1] "FOO IS 1 AND BAR IS 2"
+      CHK  $FOO = 1
+      CHK  $BAR = 2
+      SET  !LINE[1] "FOO IS 1 AND BAR IS 2"
       CATCH
-      SET 'LINE[2] "THIS WILL ALWAYS BE PRINTED"
+      SET  !LINE[2] "THIS WILL ALWAYS BE PRINTED"
       CATCH
 
     The second CATCH does nothing. If either FOO is not 1 or
@@ -288,7 +288,7 @@ APPD <var> <text>
 
 SHFT <dest> <src>
 
-    Removes the first character from the value in variable 
+    Removes the first character from the value in variable
     <src> and puts it in
 
 MARK <phrase>
