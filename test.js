@@ -132,7 +132,8 @@ describe('Variables', function() {
 
 describe('expandName', function() {
   it('returns names without square brackets unchanged', function() {
-    expect(Variables.expandSubscripts('foo')).toBe('foo')
+    var v = Variables()
+    expect(v._expandSubscripts('foo')).toBe('foo')
   })
 
   it('expands names with a subscript', function() {
@@ -140,7 +141,7 @@ describe('expandName', function() {
     v.declare('i')
     v.set('i', 'hello')
 
-    expect(Variables.expandSubscripts('foo[i]', v))
+    expect(v._expandSubscripts('foo[i]'))
       .toBe('foo 5:hello')
   })
 
@@ -151,7 +152,7 @@ describe('expandName', function() {
     v.set('i', 'hello')
     v.set('k', 'wow')
 
-    expect(Variables.expandSubscripts('foo[i][k]', v))
+    expect(v._expandSubscripts('foo[i][k]'))
       .toBe('foo 5:hello3:wow')
   })
 })

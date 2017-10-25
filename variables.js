@@ -9,11 +9,12 @@ function Variables() {
     del: del,
     push: push,
     pop: pop,
-    incr: incr
+    incr: incr,
+    _expandSubscripts: _expandSubscripts
   }
 
   function declare(name) {
-    name = Variables.expandSubscripts(name, self)
+    name = _expandSubscripts(name)
     if (!isInCurrentFrame(name)) {
       declarations[name] = ''
     } else {
@@ -22,7 +23,7 @@ function Variables() {
   }
 
   function read(name) {
-    name = Variables.expandSubscripts(name, self)
+    name = _expandSubscripts(name)
     if (isInScope(name)) {
       return declarations[name]
     } else {
@@ -31,7 +32,7 @@ function Variables() {
   }
 
   function set(name, value) {
-    name = Variables.expandSubscripts(name, self)
+    name = _expandSubscripts(name)
     if (isInScope(name)) {
       /* go up the stack until we find where the variable
        * is declared */
@@ -44,7 +45,7 @@ function Variables() {
   }
 
   function del(name) {
-    name = Variables.expandSubscripts(name, self)
+    name = _expandSubscripts(name)
     if (isInCurrentFrame(name)) {
       delete declarations[name]
     } else {
@@ -69,6 +70,20 @@ function Variables() {
     }
   }
 
+  function _expandSubscripts(name) {
+    if (name.indexOf('[') === -1) {
+      return name
+    }
+
+    var parts = name.split('[')
+
+    return parts[0] + ' ' + parts.slice(1).map(function(part) {
+      var subscript = part.slice(0, part.length - 1)
+      var subscriptValue = self.read(subscript)
+      return subscriptValue.length + ':' + subscriptValue
+    }).join('')
+  }
+
   function isInScope(name) {
     return name in declarations
   }
@@ -76,20 +91,6 @@ function Variables() {
   function isInCurrentFrame(name) {
     return has(declarations, name)
   }
-}
-
-Variables.expandSubscripts = function(name, variables) {
-  if (name.indexOf('[') === -1) {
-    return name
-  }
-
-  var parts = name.split('[')
-
-  return parts[0] + ' ' + parts.slice(1).map(function(part) {
-    var subscript = part.slice(0, part.length - 1)
-    var subscriptValue = variables.read(subscript)
-    return subscriptValue.length + ':' + subscriptValue
-  }).join('')
 }
 
 function has(obj, prop) {
